@@ -1,3 +1,4 @@
+name: valid
 
 on:
   pull_request:
