@@ -1,0 +1,38 @@
+---
+name: pr_preview
+
+on:
+  workflow_run:
+    workflows:
+      - valid
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-${{ github.event.workflow_run.head_branch }}
+
+      - uses: jsmrcaga/action-netlify-deploy@master
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          deploy_alias: ${{ github.event.workflow_run.head_branch }}
+      
+      #- uses: geekyeggo/delete-artifact@v1
+      #  with:
+      #    name: build-${{ github.event.workflow_run.head_branch }}
+      
+      # Creates a status check with link to preview
+      - name: Status check
+        uses: Sibz/github-status-action@v1.1.1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: Netlify preview
+          state: success
+          target_url: https://${{ env.BRANCH_NAME }}--jolly-johnson-900bc0.netlify.app
