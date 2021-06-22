@@ -55,12 +55,19 @@ jobs:
       #  with:
       #    name: build-${{ github.event.workflow_run.head_branch }}
       
+      - uses: potiuk/get-workflow-origin@v1_1
+        id: source-run-info
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+      - run: echo sourceHeadSha = ${{ steps.source-run-info.outputs.sourceHeadSha }}
+      
       # Creates a status check with link to preview
       - name: Status check
         uses: Sibz/github-status-action@v1.1.1
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: Netlify preview
-          sha: ${{ github.event.pull_request.head.sha }}
+          sha: ${{ steps.source-run-info.outputs.sourceHeadSha }}
           state: success
           target_url: https://${{ github.event.workflow_run.head_branch }}--jolly-johnson-900bc0.netlify.app
