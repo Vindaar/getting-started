@@ -25,6 +25,7 @@ jobs:
             });
             console.log("Matching string: " + "build-${{ github.event.workflow_run.head_branch }}")
             var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+            console.log(artifact.name)
               return artifact.name == "build-${{ github.event.workflow_run.head_branch }}"
             })[0];
             var download = await github.actions.downloadArtifact({
