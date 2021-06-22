@@ -19,6 +19,9 @@ jobs:
       - run: nimble install -y
       - name: GenBook
         run: nimble genbook
+      - name: Save PR number
+        run: |
+          echo ${{ github.event.number }} > ./docs/NR
       - uses: actions/upload-artifact@v2
         with:
           name: build-${{ github.head_ref }}
