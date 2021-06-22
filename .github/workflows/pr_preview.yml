@@ -23,13 +23,14 @@ jobs:
                repo: context.repo.repo,
                run_id: ${{github.event.workflow_run.id }},
             });
+            console.log("Matching string: " + "build-${{ github.event.workflow_run.head_branch }}")
             var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
               return artifact.name == "build-${{ github.event.workflow_run.head_branch }}"
             })[0];
             var download = await github.actions.downloadArtifact({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               artifact_id: matchArtifact.ids,
+               artifact_id: matchArtifact.id,
                archive_format: 'zip',
             });
             var fs = require('fs');
