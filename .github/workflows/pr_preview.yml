@@ -37,7 +37,7 @@ jobs:
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/docs.zip', Buffer.from(download.data));
       - run: rm -r docs
-      - run: unzip docs.zip
+      - run: unzip -d docs/ docs.zip
       #- uses: actions/download-artifact@v2
       #  with:
       #    name: build-${{ github.event.workflow_run.head_branch }}
