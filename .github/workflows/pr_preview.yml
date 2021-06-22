@@ -14,15 +14,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - name: 'Download artifact'
+        uses: actions/github-script@v3.1.0
         with:
-          name: build-${{ github.event.workflow_run.head_branch }}
+          script: |
+            var artifacts = await github.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "build-${{ github.event.workflow_run.head_branch }}"
+            })[0];
+            var download = await github.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/docs.zip', Buffer.from(download.data));
+      - run: rm -r docs
+      - run: unzip docs.zip
+      #- uses: actions/download-artifact@v2
+      #  with:
+      #    name: build-${{ github.event.workflow_run.head_branch }}
 
       - uses: jsmrcaga/action-netlify-deploy@master
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           deploy_alias: ${{ github.event.workflow_run.head_branch }}
+          build_directory: docs/
+          install_command: ls
+          build_command: ls
       
       #- uses: geekyeggo/delete-artifact@v1
       #  with:
