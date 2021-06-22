@@ -9,6 +9,8 @@ nbText: """
 
 # This header is new in this PR and will hopefully be visible in a preview.
 
+# This is an even newer header!
+
 ## Line plot
 """
 
