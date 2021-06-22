@@ -61,5 +61,6 @@ jobs:
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: Netlify preview
+          sha: ${{ github.event.pull_request.head.sha }}
           state: success
           target_url: https://${{ github.event.workflow_run.head_branch }}--jolly-johnson-900bc0.netlify.app
